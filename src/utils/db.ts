@@ -1,4 +1,6 @@
+import mongoose from 'mongoose';
 import { dbUri, PORT, HOST } from './config';
+import logger from '../utils/logger';
 
 const db = {
     mongo: {
@@ -17,4 +19,15 @@ const db = {
     }
 };
 
-export default db;
+const database = () => {
+    mongoose
+        .connect(db.mongo.url, db.mongo.options)
+        .then(() => {
+            logger.info('Connected to Database');
+        })
+        .catch((err) => {
+            logger.error(err.message);
+        });
+};
+
+export default database;
