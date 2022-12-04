@@ -4,3 +4,7 @@ import Product from './product.model';
 export async function createProduct(input: IProduct) {
     return Product.create(input);
 }
+
+export async function getAllProducts() {
+    return Product.find();
+}
