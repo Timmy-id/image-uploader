@@ -8,7 +8,6 @@ interface IGallery {
 export default interface IProduct extends Document {
     name: string;
     description: string;
-    image: string;
     gallery: IGallery[];
     price: number;
     stock?: number;
