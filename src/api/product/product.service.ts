@@ -8,3 +8,10 @@ export async function createProduct(input: IProduct) {
 export async function getAllProducts() {
     return Product.find();
 }
+
+export async function searchProducts(name: string) {
+    const products = await Product.find({
+        name: { $regex: name, $options: 'i' }
+    });
+    return products;
+}
