@@ -9,6 +9,9 @@ type ProductResponse<T> = { err: string } | T;
 
 export const createProductController = async (req: Request<{}, {}, IProduct>, res: Response<ProductResponse<IProduct>>) => {
     const body = req.body;
+    if (!body.name || body.price) {
+        return res.status(400).json({ err: 'Enter the required fields' });
+    }
 
     body.gallery = [];
 
