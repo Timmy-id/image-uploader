@@ -84,6 +84,6 @@ export const searchProductsController = async (req: Request, res: Response) => {
     }
 };
 
-export const deleteProductController = async (products: Request, res: Response) => {
-    
+export const deleteProductController = async (req: Request, res: Response) => {
+
 }
