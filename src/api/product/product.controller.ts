@@ -83,3 +83,7 @@ export const searchProductsController = async (req: Request, res: Response) => {
         return res.status(500).json({ err: 'Something bad occurred' });
     }
 };
+
+export const deleteProductController = async (products: Request, res: Response) => {
+    
+}
