@@ -1,5 +1,5 @@
 import express from 'express';
-import { createProductController, getAllProductsController, searchProductsController, getSingleProductController } from './product.controller';
+import { createProductController, getAllProductsController, searchProductsController, getSingleProductController, deleteProductController } from './product.controller';
 import upload from '../../utils/multer';
 import multerErrorHandler from '../../middleware/multerMiddleware';
 
@@ -9,5 +9,6 @@ router.post('/', [upload.array('gallery', 3), multerErrorHandler], createProduct
 router.get('/', getAllProductsController);
 router.get('/:id', getSingleProductController);
 router.post('/search', searchProductsController);
+router.delete('/:id', deleteProductController);
 
 export default router;

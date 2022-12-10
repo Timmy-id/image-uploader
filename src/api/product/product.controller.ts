@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import mongoose from 'mongoose';
-import { createProduct, getAllProducts, searchProducts, getSingleProduct } from './product.service';
+import { createProduct, getAllProducts, searchProducts, getSingleProduct, deleteProduct } from './product.service';
 import IProduct from './product.interface';
 import logger from '../../utils/logger';
 import cloudinary from '../../utils/cloudinary';
@@ -85,5 +85,25 @@ export const searchProductsController = async (req: Request, res: Response) => {
 };
 
 export const deleteProductController = async (req: Request, res: Response) => {
-
-}
+    const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({ err: 'Invalid product ID' });
+    }
+    try {
+        const product = await getSingleProduct(id);
+        if (!product) {
+            return res.status(404).json({ err: 'Product not found' });
+        }
+        const imgIds = product.gallery.map((img) => img.publicId);
+        if (imgIds.length > 0) {
+            imgIds.forEach(async (imgId) => {
+                await cloudinary.uploader.destroy(imgId);
+            });
+        }
+        await deleteProduct(id);
+        return res.status(204).json({});
+    } catch (err) {
+        logger.error(err);
+        return res.status(500).json({ err: 'Something bad occurred' });
+    }
+};

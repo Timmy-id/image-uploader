@@ -19,3 +19,7 @@ export async function searchProducts(name: string) {
     });
     return products;
 }
+
+export async function deleteProduct(id: string) {
+    return await Product.findOneAndDelete({ _id: id });
+}
