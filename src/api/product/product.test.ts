@@ -49,39 +49,31 @@ const product = {
     isAvailable: true
 };
 
-const product_one = {
-    // _id: new mongoose.Types.ObjectId().toString(),
-    name: 'Iron',
-    description: 'This is a new product',
-    gallery: [
-        {
-            url: 'https://res.cloudinary.com/timmix95/image/upload/v1670271499/Image-uploader/r2xuf78lrkva1rq9a5bb.png',
-            publicId: 'Image-uploader/r2xuf78lrkva1rq9a5bb'
-        },
-        {
-            url: 'https://res.cloudinary.com/timmix95/image/upload/v1670271504/Image-uploader/uy43f78lrkva1rq9arr4.png',
-            publicId: 'Image-uploader/uy43f78lrkva1rq9arr4'
-        },
-        {
-            url: 'https://res.cloudinary.com/timmix95/image/upload/v1670271654/Image-uploader/tr75f78lrkva1rq9kl90.png',
-            publicId: 'Image-uploader/tr75f78lrkva1rq9kl90'
-        }
-    ],
-    price: 20000,
-    stock: 5,
-    isAvailable: true
-};
+let mongo: MongoMemoryServer | null = null
 
 describe('product', () => {
     beforeAll(async () => {
-        const mongoServer = await MongoMemoryServer.create();
-        await mongoose.connect(mongoServer.getUri());
+        mongo = await MongoMemoryServer.create()
+        const uri = mongo.getUri()
+        await mongoose.connect(uri);
     });
 
     afterAll(async () => {
-        await mongoose.disconnect();
-        await mongoose.connection.close();
+        if (mongo) {
+            await mongoose.connection.dropDatabase()
+            await mongoose.connection.close()
+            await mongo.stop()
+        }
     });
+
+    afterEach(async () => {
+        const collections = await mongoose.connection.db.collections()
+        for (let collection of collections) {
+            await collection.deleteOne({})
+        }
+    })
+
+
 
     describe('get product route', () => {
         // describe('product does exist', () => {
@@ -152,9 +144,18 @@ describe('product', () => {
         describe('given the product id, return the product', () => {
             it('should return a 200 and the product', async () => {
                 // @ts-ignore
-                const newProduct = await createProduct(product_one);
+                const newProduct = await createProduct(product);
                 const { statusCode } = await supertest(app).get(`/api/v1/products/${newProduct._id}`);
                 expect(statusCode).toBe(200);
+            });
+        });
+
+        describe('given the product id, delete the product', () => {
+            it('should return a 204', async () => {
+                // @ts-ignore
+                const newProduct = await createProduct(product);
+                const { statusCode } = await supertest(app).delete(`/api/v1/products/${newProduct._id}`);
+                expect(statusCode).toBe(204);
             });
         });
     });

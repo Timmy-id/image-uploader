@@ -8,7 +8,7 @@
     "start": "npm run build && node build/server.js",
     "start:dev": "ts-node-dev  --respawn src/server.ts",
     "format": "prettier --write src/",
-    "test": "jest --coverage",
+    "test": "jest",
     "test:watch": "jest --watch"
   },
   "keywords": [],
